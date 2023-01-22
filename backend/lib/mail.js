@@ -1,5 +1,5 @@
-import {  SMTPClient } from 'emailjs';
-import ejs from 'ejs';
+const { SMTPClient } = require('emailjs');
+const ejs = require('ejs');
 
 const smtp = {
 	host: process.env.SMTP_HOST || "",
