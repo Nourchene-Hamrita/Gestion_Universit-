@@ -5,7 +5,11 @@ const crudOptions = {
     "update": false,
     "delete": false,
 }
-const attributes = {}
+const attributes = {
+    verified:{
+        type:Boolean,
+    }
+}
 const associationsData = {
     user_id: {
         NOptions: {
