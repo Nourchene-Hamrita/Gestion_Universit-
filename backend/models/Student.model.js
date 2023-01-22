@@ -72,6 +72,7 @@ class Student extends modelStudent {
                 keyName: 'student_id',
                 NOptions: {},
                
+
             },
             PFE: {
                 type: 'one',
@@ -85,3 +86,15 @@ class Student extends modelStudent {
     }
 }
 module.exports = Student;
+
+const cron = require('node-cron');
+const { MailService } = require("../lib/mail");
+cron.schedule("00 00 1 3,9 *", async () => {
+    const students = await Student.find()
+        .populate("user_id")
+    for (const student of students) {
+        const user = student.user_id
+        MailService.SendUserMessage(user, "ajouter un nouveau travail")
+    }
+
+})

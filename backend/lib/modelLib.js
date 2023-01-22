@@ -318,15 +318,12 @@ class ModelLib {
 
         }
         delete data._id;
-        const newModel = new Model({
-            ...data
-        });
         try {
             var parent = await this.CreateModel(Model, data);
             const associationName = data[discriminatorKey]
             const nOptions = ModelLib.GetNAssociationOptions(Model, associationName, {});
             var childData = data;
-            childData[nOptions.keyName] = newModel._id;
+            childData[nOptions.keyName] = parent._id;
             const child = await this.CreateModel(nOptions.AssociationModel, childData);
             console.log(associationName);
             console.log(child);

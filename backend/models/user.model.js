@@ -62,7 +62,9 @@ const attributes = {
     },
     passwordChangedDate: {
         type: Date,
-        NOptions: { invisible: true, }
+        NOptions: {
+            invisible: true, immutable: true,
+        }
     },
 
     createdAt: {
@@ -178,4 +180,3 @@ class User extends modelUser {
     }
 };
 module.exports = User;
-
