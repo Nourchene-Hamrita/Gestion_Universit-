@@ -8,7 +8,9 @@ const ModelLib = require('../lib/modelLib');
 const { signUpErrors } = require('../utils/errors.utils');
 
 const User = db.User;
-
+function HandleError(res, error) {
+    res.status(error.status || 400).send(error.message || error)
+}
 function decodeToken(token) {
     if (!token) throw { message: `Token Not Found`, status: 401 }
     const decoded = jwt.verify(token, "nour")
@@ -41,7 +43,7 @@ async function verifyToken(req, res, next) {
 }
 router.post('/login', async function (req, res) {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.body.data
         const user = await User.findOne({ email })
         if (!user) {
             return res.status(400).send({ auth: false, token: null, message: 'Authentication Failed' });

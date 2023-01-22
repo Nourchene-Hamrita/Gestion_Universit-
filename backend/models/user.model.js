@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var bcrypt = require('bcryptjs');
 
 const crudOptions = {
     "create": true,
@@ -25,7 +26,7 @@ const attributes = {
         NOptions: {}
 
     },
-    login: {
+    email: {
         type: String,
         required: true,
         unique: true,
@@ -56,7 +57,7 @@ const attributes = {
         enum: ['admin', 'student', 'alumni', 'teacher', 'administrative', 'trainingManager'],
         NOptions: {
             discriminatorKey: true,
-            immutable: true,
+            // immutable: true,
         }
     },
     passwordChangedDate: {
@@ -99,39 +100,39 @@ class User extends modelUser {
                     child: true
                 },
             },
-            student: {
-                type: 'one',
-                modelName: 'Student',
-                keyName: 'user_id',
-                NOptions: {
-                    child: true,
-                },
-            },
+            // student: {
+            //     type: 'one',
+            //     modelName: 'Student',
+            //     keyName: 'user_id',
+            //     NOptions: {
+            //         child: true,
+            //     },
+            // },
 
-            teacher: {
-                type: 'one',
-                modelName: 'Teacher',
-                keyName: 'user_id',
-                NOptions: {
-                    child: true,
-                },
-            },
-            administrative: {
-                type: 'one',
-                modelName: 'Administrative',
-                keyName: 'user_id',
-                NOptions: {
-                    child: true
-                },
-            },
-            trainingManager: {
-                type: 'one',
-                modelName: 'TrainingManager',
-                keyName: 'user_id',
-                NOptions: {
-                    child: true
-                },
-            },
+            // teacher: {
+            //     type: 'one',
+            //     modelName: 'Teacher',
+            //     keyName: 'user_id',
+            //     NOptions: {
+            //         child: true,
+            //     },
+            // },
+            // administrative: {
+            //     type: 'one',
+            //     modelName: 'Administrative',
+            //     keyName: 'user_id',
+            //     NOptions: {
+            //         child: true
+            //     },
+            // },
+            // trainingManager: {
+            //     type: 'one',
+            //     modelName: 'TrainingManager',
+            //     keyName: 'user_id',
+            //     NOptions: {
+            //         child: true
+            //     },
+            // },
 
         }
     };

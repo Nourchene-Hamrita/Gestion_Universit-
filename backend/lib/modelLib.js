@@ -160,7 +160,7 @@ class ModelLib {
                 ...data
             });
             console.log('fullname', newModel.fullname);
-           
+
 
             const docs = await newModel.save();
 
@@ -322,13 +322,12 @@ class ModelLib {
             ...data
         });
         try {
-            var parent = await newModel.save();
+            var parent = await this.CreateModel(Model, data);
             const associationName = data[discriminatorKey]
             const nOptions = ModelLib.GetNAssociationOptions(Model, associationName, {});
             var childData = data;
             childData[nOptions.keyName] = newModel._id;
-            const newChildModel = new nOptions.AssociationModel(childData);
-            const child = await newChildModel.save();
+            const child = await this.CreateModel(nOptions.AssociationModel, childData);
             console.log(associationName);
             console.log(child);
             parent[associationName] = child;
