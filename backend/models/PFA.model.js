@@ -5,32 +5,43 @@ const attributes = {
         type: String,
         NOptions: {}
     },
-    job: {
-        type: String,
-        NOptions: {}
-    },
     description: {
         type: String,
         NOptions: {}
     },
-    date: {
+    startDate: {
         type: Date,
         NOptions: {}
     },
-    
- 
+    endDate: {
+        type: Number,
+        NOptions: {}
+    },
 }
 const associationsData = {
-    
+    student_id: {
+        NOptions: {
+        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "student",
+        required: true
+    },
+    teacher_id: {
+        NOptions: {
+        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "teacher",
+        required: true
+    },
 
 };
 schema = mongoose.Schema,
-    contractSchema = new schema({
+    PFASchema = new schema({
         ...attributes,
         ...associationsData
     });
-const modelContract = mongoose.model("contract", contractSchema);
-class Contract extends modelContract {
+const modelPFA = mongoose.model("pfa", PFASchema);
+class PFA extends modelPFA {
     
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
@@ -41,4 +52,4 @@ class Contract extends modelContract {
         }
     }
 }
-module.exports = Contract;
+module.exports = PFA;

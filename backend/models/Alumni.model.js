@@ -7,23 +7,23 @@ const crudOptions = {
 }
 const attributes = {}
 const associationsData = {
-    user_id: {
+    student_id: {
         NOptions: {
             parent: true
         },
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "student",
         required: true
     },
 
 };
 schema = mongoose.Schema,
-    adminSchema = new schema({
+    alumniSchema = new schema({
         ...attributes,
         ...associationsData
     });
-const modelAdmin = mongoose.model("admin", adminSchema);
-class Admin extends modelAdmin {
+const modelAlumni = mongoose.model("alumni", alumniSchema);
+class Alumni extends modelAlumni {
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
@@ -34,4 +34,4 @@ class Admin extends modelAdmin {
         }
     }
 }
-module.exports = Admin;
+module.exports = Alumni;

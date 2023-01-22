@@ -4,7 +4,28 @@ const db = require('../models');
 const ModelLib = require('../lib/modelLib');
 const { signUpErrors } = require('../utils/errors.utils');
 
-
+/**
+ * 
+ * @param {"create" |"read" |"update" |"delete"} crud 
+ * @returns 
+ */
+function verifyCrud(crud) {
+    return async (req, res, next) => {
+        const user = req.user
+        const Model = req.Model
+        const crudOption = Model.crudOptions[crud] || true
+        let crudResponse
+        if (typeof crudOption == "function") {
+            crudResponse = await crudOption(user || undefined)
+        } else {
+            crudResponse = crudOption
+        }
+        if (!crudResponse)
+            throw { status: 403, message: "User Not Authorized" };
+        req.crudResponse = crudResponse
+        return next()
+    }
+}
 function VerifyModel(req, res, next) {
     const Model = db[req.params.Model];
     if (!Model) {

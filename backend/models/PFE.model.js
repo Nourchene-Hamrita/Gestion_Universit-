@@ -9,6 +9,14 @@ const attributes = {
         type: String,
         NOptions: {}
     },
+    company_name:{
+        type:String,
+        Noptions:{},
+    },
+    country:{
+        type:String,
+        Noptions:{},
+    },
     startDate: {
         type: Date,
         NOptions: {}
@@ -19,16 +27,28 @@ const attributes = {
     },
 }
 const associationsData = {
-    
+    student_id: {
+        NOptions: {
+        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "student",
+        required: true
+    },
+    teacher_id: {
+        NOptions: {},
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "teacher",
+        required: true
+    },
 
 };
 schema = mongoose.Schema,
-    eventSchema = new schema({
+    PFESchema = new schema({
         ...attributes,
         ...associationsData
     });
-const modelEvent = mongoose.model("event", eventSchema);
-class Event extends modelEvent {
+const modelPFE = mongoose.model("pfe", PFESchema);
+class PFE extends modelPFE {
     
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
@@ -39,4 +59,4 @@ class Event extends modelEvent {
         }
     }
 }
-module.exports = Event;
+module.exports = PFE;
