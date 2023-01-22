@@ -5,6 +5,29 @@ const ModelLib = require('../lib/modelLib');
 const { signUpErrors } = require('../utils/errors.utils');
 
 
+/**
+ * 
+ * @param {"create" |"read" |"update" |"delete"} crud 
+ * @returns 
+ */
+function verifyCrud(crud) {
+    return async (req, res, next) => {
+        const user = req.user
+        const Model = req.Model
+        const crudOption = Model.crudOptions[crud] || true
+        let crudResponse
+        if (typeof crudOption == "function") {
+            crudResponse = await crudOption(user || undefined)
+        } else {
+            crudResponse = crudOption
+        }
+        if (!crudResponse)
+            throw { status: 403, message: "User Not Authorized" };
+        req.crudResponse = crudResponse
+        return next()
+    }
+}
+
 function VerifyModel(req, res, next) {
     const Model = db[req.params.Model];
     if (!Model) {
@@ -43,9 +66,13 @@ function VerifyAssociation(req, res, next) {
     };
     return res.status(400).send('association is not valid')
 };
-router.post('/:Model/Create', VerifyModel, async function (req, res, next) {
+router.post('/:Model/Create', VerifyModel, verifyCrud("create"), async function (req, res, next) {
     const Model = req.Model;
     try {
+        const crudResponse = req.crudResponse
+        if (crudResponse != true) {
+            throw { status: 403, message: "User Not Authorized" };
+        }
         const result = await ModelLib.CreateModel(Model, req.body.data);
         res.send(result);
         console.log(result);
@@ -54,10 +81,15 @@ router.post('/:Model/Create', VerifyModel, async function (req, res, next) {
     }
 
 });
-router.get('/:Model/GetAllModels', VerifyModel, async function (req, res, next) {
+router.get('/:Model/GetAllModels', VerifyModel, verifyCrud("read"), async function (req, res, next) {
     const Model = req.Model;
     try {
-        const result = await ModelLib.GetModel(Model);
+        const crudResponse = req.crudResponse
+        let options = {}
+        if (crudResponse != true) {
+            options.where = crudResponse
+        }
+        const result = await ModelLib.GetModel(Model, null, options);
         res.send({ data: result });
         console.log(result);
     } catch (error) {
