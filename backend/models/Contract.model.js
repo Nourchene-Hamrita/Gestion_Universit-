@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
-
+const crudOptions = {
+    "create": false,
+    "read": false,
+    "update": false,
+    "delete": false,
+}
 const attributes = {
     type: {
         type: String,
@@ -22,7 +27,7 @@ schema = mongoose.Schema,
     });
 const modelContract = mongoose.model("contract", contractSchema);
 class Contract extends modelContract {
-    
+    static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
     static get NAssociationsData() {

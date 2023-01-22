@@ -7,12 +7,12 @@ const crudOptions = {
 }
 const attributes = {}
 const associationsData = {
-    student_id: {
+    user_id: {
         NOptions: {
             parent: true
         },
         type: mongoose.Schema.Types.ObjectId,
-        ref: "student",
+        ref: "user",
         required: true
     },
 
@@ -29,7 +29,13 @@ class Alumni extends modelAlumni {
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
         return {
+            offers: {
+                type: 'many',
+                modelName: 'Offer',
+                keyName: 'alumni_id',
+                NOptions: {},
 
+            },
 
         }
     }

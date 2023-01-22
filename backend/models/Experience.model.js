@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
-
+const crudOptions = {
+    "create": false,
+    "read": false,
+    "update": false,
+    "delete": false,
+}
 const attributes = {
     title: {
         type: String,
@@ -17,21 +22,27 @@ const attributes = {
         type: Date,
         NOptions: {}
     },
-    
- 
+
+
 }
 const associationsData = {
-    
+    student_id: {
+        NOptions: {
+        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "student",
+        required: true
+    },
 
 };
 schema = mongoose.Schema,
-    contractSchema = new schema({
+    experienceSchema = new schema({
         ...attributes,
         ...associationsData
     });
-const modelContract = mongoose.model("contract", contractSchema);
-class Contract extends modelContract {
-    
+const modelExperience = mongoose.model("experience", experienceSchema);
+class Experience extends modelExperience {
+    static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
@@ -41,4 +52,4 @@ class Contract extends modelContract {
         }
     }
 }
-module.exports = Contract;
+module.exports = Experience;

@@ -100,39 +100,47 @@ class User extends modelUser {
                     child: true
                 },
             },
-            // student: {
-            //     type: 'one',
-            //     modelName: 'Student',
-            //     keyName: 'user_id',
-            //     NOptions: {
-            //         child: true,
-            //     },
-            // },
+            student: {
+                type: 'one',
+                modelName: 'Student',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true,
+                },
+            },
+             alumni: {
+                type: 'one',
+                modelName: 'Alumni',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true,
+                },
+            },
 
-            // teacher: {
-            //     type: 'one',
-            //     modelName: 'Teacher',
-            //     keyName: 'user_id',
-            //     NOptions: {
-            //         child: true,
-            //     },
-            // },
-            // administrative: {
-            //     type: 'one',
-            //     modelName: 'Administrative',
-            //     keyName: 'user_id',
-            //     NOptions: {
-            //         child: true
-            //     },
-            // },
-            // trainingManager: {
-            //     type: 'one',
-            //     modelName: 'TrainingManager',
-            //     keyName: 'user_id',
-            //     NOptions: {
-            //         child: true
-            //     },
-            // },
+            teacher: {
+                type: 'one',
+                modelName: 'Teacher',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true,
+                },
+            },
+            administrative: {
+                type: 'one',
+                modelName: 'Administrative',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true
+                },
+            },
+            trainingManager: {
+                type: 'one',
+                modelName: 'TrainingManager',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true
+                },
+            },
 
         }
     };

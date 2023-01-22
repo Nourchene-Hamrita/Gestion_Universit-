@@ -1,4 +1,10 @@
 const mongoose = require("mongoose");
+const crudOptions = {
+    "create": false,
+    "read": false,
+    "update": false,
+    "delete": false,
+}
 const attributes = {
     class: {
         type: String,
@@ -54,28 +60,24 @@ schema = mongoose.Schema,
     });
 const modelStudent = mongoose.model("student", studentSchema);
 class Student extends modelStudent {
+    static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
         return {
-            alumni: {
-                type: 'one',
-                modelName: 'Alumni',
-                keyName: 'student_id',
-                NOptions: {
-                    child: true,
-                },
-            },
+           
             PFA: {
                 type: 'one',
                 modelName: 'PFA',
                 keyName: 'student_id',
+                NOptions: {},
                
             },
             PFE: {
                 type: 'one',
                 modelName: 'PFE',
                 keyName: 'student_id',
+                NOptions: {},
                
             },
 

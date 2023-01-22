@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
-
+const crudOptions = {
+    "create": false,
+    "read": false,
+    "update": false,
+    "delete": false,
+}
 const attributes = {
     startDate: {
         type: Date,
@@ -11,7 +16,7 @@ const attributes = {
     },
 }
 const associationsData = {
-    
+
 
 };
 schema = mongoose.Schema,
@@ -21,7 +26,7 @@ schema = mongoose.Schema,
     });
 const UniversitySeasonmodel = mongoose.model("UniversitySeason", USeasonSchema);
 class UniversitySeason extends UniversitySeasonmodel {
-    
+    static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
     static get NAssociationsData() {

@@ -6,8 +6,9 @@ const crudOptions = {
     "delete": false,
 }
 const attributes = {
-    requestedInstitut: {
+    type: {
         type: String,
+        enum:['advice','job offer','opportunity'],
         NOptions: {}
     },
     title: {
@@ -18,26 +19,30 @@ const attributes = {
         type: String,
         NOptions: {}
     },
-    startDate: {
+    createdAt: {
         type: Date,
+        default: Date.now,
         NOptions: {}
-    },
-    endDate: {
-        type: Number,
-        NOptions: {}
-    },
+    }
+
 }
 const associationsData = {
-    
+    alumni_id: {
+        NOptions: {
+        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "alumni",
+        required: true
+    },
 
 };
 schema = mongoose.Schema,
-    eventSchema = new schema({
+    offerSchema = new schema({
         ...attributes,
         ...associationsData
     });
-const modelEvent = mongoose.model("event", eventSchema);
-class Event extends modelEvent {
+const modelOffer = mongoose.model("offer", offerSchema);
+class Offer extends modelOffer {
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
@@ -48,4 +53,4 @@ class Event extends modelEvent {
         }
     }
 }
-module.exports = Event;
+module.exports = Offer;

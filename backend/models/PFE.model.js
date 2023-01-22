@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
-
+const crudOptions = {
+    "create": false,
+    "read": false,
+    "update": false,
+    "delete": false,
+}
 const attributes = {
     title: {
         type: String,
@@ -8,6 +13,10 @@ const attributes = {
     description: {
         type: String,
         NOptions: {}
+    },
+    teckStack:{
+        type:[String],
+        NOptions:{}
     },
     company_name:{
         type:String,
@@ -49,7 +58,7 @@ schema = mongoose.Schema,
     });
 const modelPFE = mongoose.model("pfe", PFESchema);
 class PFE extends modelPFE {
-    
+    static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
