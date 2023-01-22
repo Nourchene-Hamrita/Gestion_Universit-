@@ -11,7 +11,7 @@ const attributes = {
         NOptions: {}
     },
     endDate: {
-        type: Number,
+        type: Date,
         NOptions: {}
     },
 }
