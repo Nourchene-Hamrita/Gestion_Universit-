@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { User, Student, Teacher } = require(".");
 const { MailService } = require("../lib/mail");
 const crudOptions = {
     "create": (user) => { return ["admin"].includes(user.account) },

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { User } = require(".");
 const crudOptions = {
     "create": (user) => { return ["alumni"].includes(user.account) },
     "read": (user) => {
