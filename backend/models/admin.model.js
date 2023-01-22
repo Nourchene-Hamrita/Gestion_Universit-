@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-const crudOptions = {
+const crudOptions= {
     "create": false,
     "read": false,
     "update": false,
     "delete": false,
-}
+  }
 const attributes = {}
 const associationsData = {
     user_id: {
