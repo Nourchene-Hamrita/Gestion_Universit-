@@ -37,13 +37,13 @@ class ModelLib {
         if (!options) return null;
         options.modelName = association.modelName;
         options.ref = StringLib.lowerCaseFirstLetter(options.modelName);
-       
+
         options.AssociationModel = Model.db.base.models[options.ref];
         options.AssociationModel = Model.Ndb[options.modelName];
         console.log(options.modelName, options.AssociationModel.associationsData);
-      
+
         options.associationCollectionName = options.AssociationModel.collection.collectionName;
-        
+
         options.associationType = association.type;
         options.keyName = association.keyName;
         options.child = ('child' in options) ? options.child : false;
@@ -211,7 +211,7 @@ class ModelLib {
             }
         } else {
             try {
-                const model = await Model.find(where).select(str);
+                const model = await Model.findOne(where).select(str);
                 return model;
             } catch (err) {
                 console.error(err);
@@ -338,7 +338,7 @@ class ModelLib {
         }
 
     };
-        static async UpdateModel(Model, id, data) {
+    static async UpdateModel(Model, id, data) {
         const beforeEvents = ['beforeUpsert', 'beforeUpdate',];
         const afterEvents = ['afterUpdate', 'afterUpsert'];
         const checkData = ModelLib.VerifyData(Model, data);

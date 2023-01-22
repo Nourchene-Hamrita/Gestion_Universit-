@@ -1,8 +1,10 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
+const express =require('express');
+const bodyParser =require('body-parser');
+const mongoose =require('mongoose');
+const cors =require('cors');
+const dotenv =require('dotenv');
+const Router =require('./route/router');
+const {router:AuthRouter} =require('./route/auth');
 
 
 const app = express();
@@ -11,6 +13,8 @@ app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(cors());
 
+app.use('', Router);
+app.use('/auth', AuthRouter);
 
 
 const CONNECTION_URL =  process.env.CONNECTION_URL;

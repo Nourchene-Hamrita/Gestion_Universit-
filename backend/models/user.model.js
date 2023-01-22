@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema;
+const crudOptions = {
+    "create": true,
+    "read": (user) => { return { _id: user?.id } },
+    "update": true,
+    "delete": true,
+}
+let userSchema = new mongoose.Schema;
 const attributes = {
     firstName: {
         type: String,
@@ -54,7 +60,7 @@ const attributes = {
     },
     account: {
         type: String,
-        NOptions: {}
+        NOptions: { discriminatorKey: true }
     },
     type: {
         type: String,
@@ -71,6 +77,10 @@ const attributes = {
     score: {
         type: Number,
         NOptions: {}
+    },
+    passwordChangedDate: {
+        type: Date,
+        NOptions: { invisible: true, }
     },
 
     createdAt: {
@@ -96,6 +106,7 @@ class User extends modelUser {
     static get attributes() {
         return attributes
     }
+    static get crudOptions() { return crudOptions }
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
         return {

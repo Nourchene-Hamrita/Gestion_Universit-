@@ -3,18 +3,19 @@ const router = express.Router();
 const db = require('../models');
 const ModelLib = require('../lib/modelLib');
 const { signUpErrors } = require('../utils/errors.utils');
+const { verifyToken } = require('./auth');
 
 
 /**
  * 
- * @param {"create" |"read" |"update" |"delete"} crud 
+ * @param {"create" | "read" | "update" | "delete"} crud 
  * @returns 
  */
 function verifyCrud(crud) {
     return async (req, res, next) => {
         const user = req.user
         const Model = req.Model
-        const crudOption = Model.crudOptions[crud] || true
+        const crudOption = crud in Model.crudOptions ? Model.crudOptions[crud] : true
         let crudResponse
         if (typeof crudOption == "function") {
             crudResponse = await crudOption(user || undefined)
@@ -66,12 +67,19 @@ function VerifyAssociation(req, res, next) {
     };
     return res.status(400).send('association is not valid')
 };
-router.post('/:Model/Create', VerifyModel, verifyCrud("create"), async function (req, res, next) {
+router.post('/:Model/Create', VerifyModel, verifyToken, verifyCrud("create"), async function (req, res, next) {
     const Model = req.Model;
     try {
         const crudResponse = req.crudResponse
-        if (crudResponse != true) {
-            throw { status: 403, message: "User Not Authorized" };
+        let options = {}
+        switch (crudResponse) {
+            case true:
+                break;
+            case false:
+                throw { status: 403, message: "User Not Authorized" };
+                break;
+            default:
+                break;
         }
         const result = await ModelLib.CreateModel(Model, req.body.data);
         res.send(result);
@@ -81,25 +89,44 @@ router.post('/:Model/Create', VerifyModel, verifyCrud("create"), async function 
     }
 
 });
-router.get('/:Model/GetAllModels', VerifyModel, verifyCrud("read"), async function (req, res, next) {
+router.get('/:Model/GetAllModels', VerifyModel, verifyToken, verifyCrud("read"), async function (req, res, next) {
     const Model = req.Model;
     try {
         const crudResponse = req.crudResponse
         let options = {}
-        if (crudResponse != true) {
-            options.where = crudResponse
+        switch (crudResponse) {
+            case true:
+                break;
+            case false:
+                throw { status: 403, message: "User Not Authorized" };
+                break;
+            default:
+                options.where = crudResponse
+                break;
         }
-        const result = await ModelLib.GetModel(Model, null, options);
+        const result = await ModelLib.GetAllModels(Model, options);
         res.send({ data: result });
         console.log(result);
     } catch (error) {
         console.error(error);
     }
 });
-router.get('/:Model/GetModel', VerifyModel, async function (req, res, next) {
+router.get('/:Model/GetModel', VerifyModel, verifyToken, verifyCrud("read"), async function (req, res, next) {
     const Model = req.Model;
     try {
-        const result = await ModelLib.GetModel(Model, req.body.id);
+        const crudResponse = req.crudResponse
+        let options = { where: { id: req.body.id } }
+        switch (crudResponse) {
+            case true:
+                break;
+            case false:
+                throw { status: 403, message: "User Not Authorized" };
+                break;
+            default:
+                options.where = { ...options.where, ...crudResponse }
+                break;
+        }
+        const result = await ModelLib.GetModel(Model, null, options);
         res.json(result);
         console.log(result.get('email', null, { getters: true }));
         console.log(result);
@@ -107,7 +134,7 @@ router.get('/:Model/GetModel', VerifyModel, async function (req, res, next) {
         console.error(error);
     }
 });
-router.patch('/:Model/Update/:id', VerifyModel, async function (req, res, next) {
+router.patch('/:Model/Update/:id', VerifyModel, verifyToken, verifyCrud("update"), async function (req, res, next) {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown: ' + req.params.id);
     const Model = req.Model;
@@ -120,7 +147,7 @@ router.patch('/:Model/Update/:id', VerifyModel, async function (req, res, next) 
     };
 });
 
-router.delete('/:Model/Delete/:id', VerifyModel, async function (req, res, next) {
+router.delete('/:Model/Delete/:id', VerifyModel, verifyToken, verifyCrud("delete"), async function (req, res, next) {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown: ' + req.params.id);
     const Model = req.Model;
@@ -131,7 +158,7 @@ router.delete('/:Model/Delete/:id', VerifyModel, async function (req, res, next)
         console.error(error);
     };
 });
-router.post('/:Model/NGet/:association/:id', VerifyModel, VerifyNAssociation, async function (req, res, next) {
+router.post('/:Model/NGet/:association/:id', VerifyModel, verifyToken, VerifyNAssociation, async function (req, res, next) {
     const Model = req.AssociationModel;
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown: ' + req.params.id);
@@ -146,7 +173,7 @@ router.post('/:Model/NGet/:association/:id', VerifyModel, VerifyNAssociation, as
         console.error(error);
     }
 });
-router.post('/:Model/Get/:association/:id', VerifyModel, VerifyAssociation, async function (req, res, next) {
+router.post('/:Model/Get/:association/:id', VerifyModel, verifyToken, VerifyAssociation, async function (req, res, next) {
     const Model = req.Model;
     const AssociationModel = req.AssociationModel;
     if (!ObjectID.isValid(req.params.id))
@@ -160,7 +187,7 @@ router.post('/:Model/Get/:association/:id', VerifyModel, VerifyAssociation, asyn
         console.error(error);
     }
 });
-router.get('/:Model/GetModelRoleById/:id', VerifyModel, async function (req, res, next) {
+router.get('/:Model/GetModelRoleById/:id', VerifyModel, verifyToken, async function (req, res, next) {
     const Model = req.Model;
     console.log(Model);
     try {
@@ -172,7 +199,7 @@ router.get('/:Model/GetModelRoleById/:id', VerifyModel, async function (req, res
     }
 
 });
-router.post('/:Model/createUser', VerifyModel, async function (req, res, next) {
+router.post('/:Model/createUser', VerifyModel, verifyToken, async function (req, res, next) {
     const Model = req.Model;
     try {
         const result = await ModelLib.CreateDiscrimination(Model, req.body.data)
