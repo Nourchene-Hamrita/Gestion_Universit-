@@ -35,12 +35,3 @@ class Admin extends modelAdmin {
     }
 }
 module.exports = Admin;
-const cron = require('node-cron');
-cron.schedule("* * * * *", async () => {
-    const admins = await Admin.find()
-        .populate("user_id")
-    for (const admin of admins) {
-        const user = admin.user_id
-        console.log(admin);
-    }
-})
