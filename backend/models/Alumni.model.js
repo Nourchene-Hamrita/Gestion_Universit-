@@ -39,6 +39,13 @@ class Alumni extends modelAlumni {
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
         return {
+            contract: {
+                type: 'one',
+                modelName: 'Contract',
+                keyName: 'alumni_id',
+                NOptions: {},
+
+            },
             offers: {
                 type: 'many',
                 modelName: 'Offer',
