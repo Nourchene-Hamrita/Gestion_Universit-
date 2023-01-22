@@ -1,23 +1,14 @@
 const mongoose = require("mongoose");
 
 const attributes = {
-    title: {
+    type: {
         type: String,
         NOptions: {}
     },
-    job: {
+    duration: {
         type: String,
         NOptions: {}
     },
-    description: {
-        type: String,
-        NOptions: {}
-    },
-    date: {
-        type: Date,
-        NOptions: {}
-    },
-    
  
 }
 const associationsData = {

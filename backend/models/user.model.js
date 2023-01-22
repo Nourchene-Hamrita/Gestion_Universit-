@@ -25,7 +25,7 @@ const attributes = {
         NOptions: {}
 
     },
-    email: {
+    login: {
         type: String,
         required: true,
         unique: true,
@@ -50,33 +50,14 @@ const attributes = {
         NOptions: {}
 
     },
-    class: {
-        type: String,
-        NOptions: {}
-    },
-    status: {
-        type: String,
-        NOptions: {}
-    },
+
     account: {
         type: String,
-        NOptions: { discriminatorKey: true }
-    },
-    type: {
-        type: String,
-        NOptions: {}
-    },
-    graduationDate: {
-        type: Date,
-        NOptions: {}
-    },
-    firstHiringDate: {
-        type: Date,
-        NOptions: {}
-    },
-    score: {
-        type: Number,
-        NOptions: {}
+        enum: ['admin', 'student', 'alumni', 'teacher', 'administrative', 'trainingManager'],
+        NOptions: {
+            discriminatorKey: true,
+            immutable: true,
+        }
     },
     passwordChangedDate: {
         type: Date,
@@ -117,7 +98,40 @@ class User extends modelUser {
                 NOptions: {
                     child: true
                 },
-            }
+            },
+            student: {
+                type: 'one',
+                modelName: 'Student',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true,
+                },
+            },
+
+            teacher: {
+                type: 'one',
+                modelName: 'Teacher',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true,
+                },
+            },
+            administrative: {
+                type: 'one',
+                modelName: 'Administrative',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true
+                },
+            },
+            trainingManager: {
+                type: 'one',
+                modelName: 'TrainingManager',
+                keyName: 'user_id',
+                NOptions: {
+                    child: true
+                },
+            },
 
         }
     };

@@ -160,7 +160,7 @@ class ModelLib {
                 ...data
             });
             console.log('fullname', newModel.fullname);
-            newModel.set('fullname', 'Ahmed bensalem');
+           
 
             const docs = await newModel.save();
 
