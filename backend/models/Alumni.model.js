@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { Student } = require(".");
+const Student = require("./Student.model");
 const crudOptions = {
     "create": false,
     "read": false,
@@ -7,8 +7,8 @@ const crudOptions = {
     "delete": false,
 }
 const attributes = {
-    verified:{
-        type:Boolean,
+    verified: {
+        type: Boolean,
     },
     workStartDate: {
         type: Date,

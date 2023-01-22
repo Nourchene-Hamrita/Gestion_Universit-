@@ -11,7 +11,7 @@ const smtp = {
 }
 const client = new SMTPClient(smtp);
 
-export class MailService {
+class MailService {
 	static get client() {
 		return client
 	}
@@ -41,3 +41,4 @@ export class MailService {
 		await this.SendMailTemplate('./assets/mail/user_message_mail.html', user.email, { user, message }, {})
 	}
 }
+module.exports = MailService;
