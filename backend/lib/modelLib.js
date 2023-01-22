@@ -355,8 +355,6 @@ class ModelLib {
                 instance[key] = data[key];
                 instance.markModified(key);
             };
-            // console.log('fullname', instance.fullname);
-            // instance.set('fullname', 'Ahmed bensalem');
             instance.set({ email: data.email });
             instance.save((err) => {
                 console.log(err);
