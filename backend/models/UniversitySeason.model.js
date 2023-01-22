@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const crudOptions = {
-    "create": false,
+    "create": (user) => { return ["admin"].includes(user.account) },
     "read": false,
     "update": false,
     "delete": false,

@@ -9,6 +9,9 @@ const crudOptions = {
 const attributes = {
     verified: {
         type: Boolean,
+        default: false,
+        NOptions: { immutable: true }
+
     },
     workStartDate: {
         type: Date,

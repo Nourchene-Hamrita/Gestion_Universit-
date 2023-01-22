@@ -1,35 +1,33 @@
 const mongoose = require("mongoose");
+const { User } = require(".");
 const crudOptions = {
     "create": (user) => { return ["alumni"].includes(user.account) },
-    "read": false,
+    "read": (user) => {
+        switch (user.account) {
+            case "admin":
+                return true
+            case "alumni":
+                return { alumni_id: user.alumni?.id }
+        }
+        return false
+    },
     "update": false,
     "delete": false,
 }
 const attributes = {
     type: {
         type: String,
-        enum: ['advice', 'job offer', 'opportunity'],
         NOptions: {}
     },
-    title: {
+    duration: {
         type: String,
         NOptions: {}
     },
-    description: {
-        type: String,
-        NOptions: {}
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-        NOptions: {}
-    }
 
 }
 const associationsData = {
     alumni_id: {
-        NOptions: {
-        },
+        NOptions: {},
         type: mongoose.Schema.Types.ObjectId,
         ref: "alumni",
         required: true
@@ -37,12 +35,12 @@ const associationsData = {
 
 };
 schema = mongoose.Schema,
-    offerSchema = new schema({
+    vacationRequestSchema = new schema({
         ...attributes,
         ...associationsData
     });
-const modelOffer = mongoose.model("offer", offerSchema);
-class Offer extends modelOffer {
+const modelVacationRequest = mongoose.model("vacationRequest", vacationRequestSchema);
+class VacationRequest extends modelVacationRequest {
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
@@ -53,4 +51,4 @@ class Offer extends modelOffer {
         }
     }
 }
-module.exports = Offer;
+module.exports = VacationRequest;

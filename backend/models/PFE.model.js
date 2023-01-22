@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const crudOptions = {
-    "create": false,
-    "read": false,
+    "create": (user) => { return ["teacher", "student"].includes(user.account) },
+    "read": (user) => { return ["admin", "teacher", "student"].includes(user.account) },
     "update": false,
     "delete": false,
 }
@@ -14,17 +14,17 @@ const attributes = {
         type: String,
         NOptions: {}
     },
-    teckStack:{
-        type:[String],
-        NOptions:{}
+    teckStack: {
+        type: [String],
+        NOptions: {}
     },
-    company_name:{
-        type:String,
-        Noptions:{},
+    company_name: {
+        type: String,
+        Noptions: {},
     },
-    country:{
-        type:String,
-        Noptions:{},
+    country: {
+        type: String,
+        Noptions: {},
     },
     startDate: {
         type: Date,

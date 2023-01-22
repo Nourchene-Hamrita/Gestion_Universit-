@@ -2,15 +2,20 @@ const mongoose = require("mongoose");
 const { User, Student, Teacher } = require(".");
 const { MailService } = require("../lib/mail");
 const crudOptions = {
-    "create": false,
-    "read": false,
-    "update": false,
+    "create": (user) => { return ["teacher"].includes(user.account) },
+    "read": (user) => { return ["teacher", "student", "trainingManager", "admin"].includes(user.account) },
+    "update": (user) => { return ["teacher", "student", "admin"].includes(user.account) },
     "delete": false,
 }
 const attributes = {
     title: {
         type: String,
         NOptions: {}
+    },
+    approved: {
+        type: Boolean,
+        default: false,
+        NOptions: { immutable: true }
     },
     description: {
         type: String,

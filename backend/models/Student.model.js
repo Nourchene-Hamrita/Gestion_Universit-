@@ -1,13 +1,36 @@
 const mongoose = require("mongoose");
 const crudOptions = {
     "create": false,
-    "read": false,
-    "update": false,
-    "delete": false,
+    "read": (user) => {
+        switch (user.account) {
+            case "teacher":
+            case "admin":
+                return true
+            case "alumni":
+                return { public: true }
+            case "student":
+                return { "$or": [{ public: true }, { _id: user.student?.id }] }
+        }
+        return false
+    },
+    "update": (user) => {
+        switch (user.account) {
+            case "admin":
+                return true
+            case "student":
+                return { _id: user.student?.id }
+        }
+        return false
+    },
+    "delete": (user) => (user) => { return ["admin"].includes(user.account) },
 }
 const attributes = {
     class: {
         type: String,
+        NOptions: {}
+    },
+    public: {
+        type: Boolean,
         NOptions: {}
     },
     status: {

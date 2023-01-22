@@ -1,7 +1,16 @@
 const mongoose = require("mongoose");
+const { User } = require(".");
 const crudOptions = {
-    "create": false,
-    "read": false,
+    "create": (user) => { return ["alumni"].includes(user.account) },
+    "read": (user) => {
+        switch (user.account) {
+            case "admin":
+                return true
+            case "alumni":
+                return { alumni_id: user.alumni?.id }
+        }
+        return false
+    },
     "update": false,
     "delete": false,
 }

@@ -110,7 +110,7 @@ class User extends modelUser {
                     child: true,
                 },
             },
-             alumni: {
+            alumni: {
                 type: 'one',
                 modelName: 'Alumni',
                 keyName: 'user_id',

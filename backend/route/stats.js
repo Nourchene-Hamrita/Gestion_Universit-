@@ -88,6 +88,5 @@ router.get('/unemployement', verifyToken, async function (req, res, next) {
 });
 
 module.exports = {
-    verifyToken,
     router
 };
