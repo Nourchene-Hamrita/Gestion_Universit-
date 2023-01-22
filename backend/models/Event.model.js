@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const crudOptions = {
     "create": false,
-    "read": false,
+    "read": (user) => { return ["admin", "student"].includes(user.account) },
     "update": false,
     "delete": false,
 }
@@ -28,7 +28,7 @@ const attributes = {
     },
 }
 const associationsData = {
-    
+
 
 };
 schema = mongoose.Schema,

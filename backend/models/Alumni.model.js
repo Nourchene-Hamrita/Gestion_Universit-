@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Student } = require(".");
 const crudOptions = {
     "create": false,
     "read": false,
@@ -8,6 +9,10 @@ const crudOptions = {
 const attributes = {
     verified:{
         type:Boolean,
+    },
+    workStartDate: {
+        type: Date,
+        NOptions: {}
     }
 }
 const associationsData = {
@@ -23,6 +28,7 @@ const associationsData = {
 };
 schema = mongoose.Schema,
     alumniSchema = new schema({
+        ...Student.attributes,
         ...attributes,
         ...associationsData
     });

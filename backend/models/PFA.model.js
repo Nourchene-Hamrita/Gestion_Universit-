@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { User, Student, Teacher } = require(".");
+const { MailService } = require("../lib/mail");
 const crudOptions = {
     "create": false,
     "read": false,
@@ -14,9 +16,9 @@ const attributes = {
         type: String,
         NOptions: {}
     },
-    teckStack:{
-        type:[String],
-        NOptions:{}
+    teckStack: {
+        type: [String],
+        NOptions: {}
     },
     startDate: {
         type: Date,
@@ -56,6 +58,38 @@ class PFA extends modelPFA {
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
         return {
+
+
+        }
+    }
+    static get Nhooks() {
+        return {
+            beforeCreate: async (instance, data) => {
+
+
+            },
+            beforeUpdate: async (instance, data) => {
+
+            },
+            afterUpdate: async (instance, data) => {
+
+            },
+            beforeUpsert: async (instance, data) => {
+
+            },
+            afterUpsert: async (instance, data) => {
+                if (data.student_id) {
+                    const student = await Student.findById(data.student_id).populate("user_id")
+                    const user = student?.user_id
+                    await MailService.SendUserMessage(user, "Votre PFA a ete affecte")
+                }
+                if (data.teacher_id) {
+                    const teacher = await Teacher.findById(data.teacher_id).populate("user_id")
+                    const user = teacher?.user_id
+                    await MailService.SendUserMessage(user, "Un PFA a ete ajouter")
+                }
+            },
+
 
 
         }

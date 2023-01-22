@@ -65,21 +65,17 @@ class Student extends modelStudent {
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
         return {
-           
             PFA: {
                 type: 'one',
                 modelName: 'PFA',
                 keyName: 'student_id',
                 NOptions: {},
-               
-
             },
             PFE: {
                 type: 'one',
                 modelName: 'PFE',
                 keyName: 'student_id',
                 NOptions: {},
-               
             },
 
         }
@@ -97,4 +93,22 @@ cron.schedule("00 00 1 3,9 *", async () => {
         MailService.SendUserMessage(user, "ajouter un nouveau travail")
     }
 
+})
+cron.schedule("00 08 15 7,10 *", async () => {
+    //TODO third year only
+    const students = await Student.find({ graduationDate: null })
+        .populate("user_id")
+    for (const student of students) {
+        const user = student.user_id
+        MailService.SendUserMessage(user, "mettre a jour date d obtention de diplome")
+    }
+})
+cron.schedule("00 08 1 1,7 *", async () => {
+    //TODO third year only
+    const students = await Student.find({ graduationDate: null })
+        .populate("user_id")
+    for (const student of students) {
+        const user = student.user_id
+        MailService.SendUserMessage(user, "mettre a jour date des competence et profolio")
+    }
 })
