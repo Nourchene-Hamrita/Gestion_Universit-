@@ -6,13 +6,13 @@ db.Alumni = require('./Alumni.model');
 db.Teacher = require('./Teacher.model');
 db.TrainingManager = require('./TrainingManager.model');
 db.Administrative = require('./Administrative.model');
-db.PFA = require ('./PFA.model');
-db.PFE = require ('./PFE.model');
-db.Experience = require ('./Experience.model');
-db.Event = require ('./Event.model');
+db.PFA = require('./PFA.model');
+db.PFE = require('./PFE.model');
+db.Experience = require('./Experience.model');
+db.Event = require('./Event.model');
 db.Contract = require('./Contract.model');
-db.AccessRights = require ('./AccessRights.model');
-db.UniversitySeason = require ('./UniversitySeason.model');
+db.AccessRights = require('./AccessRights.model');
+db.UniversitySeason = require('./UniversitySeason.model');
 
 
 for (const key in db) {

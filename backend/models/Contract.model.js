@@ -14,10 +14,15 @@ const attributes = {
         type: String,
         NOptions: {}
     },
- 
+
 }
 const associationsData = {
-    
+    alumni_id: {
+        NOptions: {},
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "alumni",
+        required: true
+    },
 
 };
 schema = mongoose.Schema,
