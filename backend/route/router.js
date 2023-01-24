@@ -14,8 +14,8 @@ const { verifyToken } = require('./auth');
 function verifyCrud(crud) {
     return async (req, res, next) => {
         const user = req.user
-        const Model = req.Model
-        const crudOption = crud in Model.crudOptions ? Model.crudOptions[crud] : true
+        const CRUDModel = req.CRUDModel
+        const crudOption = crud in CRUDModel.crudOptions ? CRUDModel.crudOptions[crud] : true
         let crudResponse
         if (typeof crudOption == "function") {
             crudResponse = await crudOption(user || undefined)
@@ -35,6 +35,7 @@ function VerifyModel(req, res, next) {
         return res.status(process.env.RESPONSE_ERROR).send('unknown Model:', req.params.Model);
     }
     req.Model = Model;
+    req.CRUDModel = Model;
     next();
 };
 function VerifyNAssociation(req, res, next) {
@@ -47,6 +48,7 @@ function VerifyNAssociation(req, res, next) {
         if (req.options) {
             console.log(req.options);
             req.AssociationModel = db[req.options.modelName];
+            req.CRUDModel = req.AssociationModel;
             return next();
         }
     };
@@ -62,6 +64,7 @@ function VerifyAssociation(req, res, next) {
         req.options = ModelLib.GetAssociationOptions(Model, req.associationName, req.instance)
         if (req.options) {
             req.AssociationModel = db[req.options.modelName];
+            req.CRUDModel = req.AssociationModel;
             return next();
         }
     };
@@ -111,6 +114,19 @@ router.get('/:Model/GetAllModels', VerifyModel, verifyToken, verifyCrud("read"),
         console.error(error);
     }
 });
+
+router.get('/:Model/populate', VerifyModel, async function (req, res, next) {
+    const Model = req.Model;
+    try {
+        const options = ModelLib.pathsToPopulate(Model, req.body.paths)
+        console.log(options);
+        const rows = await req.Model.find().populate(options.populate)
+        res.send({ options, rows })
+    } catch (error) {
+        console.error(error);
+    }
+});
+
 router.get('/:Model/GetModel', VerifyModel, verifyToken, verifyCrud("read"), async function (req, res, next) {
     const Model = req.Model;
     try {

@@ -1,3 +1,4 @@
+const db = require("../models");
 const StringLib = require("./string");
 var util = require('util');
 const ObjectID = require('mongoose').Types.ObjectId;
@@ -15,7 +16,7 @@ class ModelLib {
         options.virtual = ('virtual' in options) ? options.virtual : false
         return options;
     };
-    static GetAssociationOptions(Model, associationName, data) {
+    static GetAssociationOptions(Model, associationName) {
         const association = Model.associationsData[associationName + '_id'];
         const options = association ? association.NOptions : null;
         if (!options) return null;
@@ -25,13 +26,13 @@ class ModelLib {
         options.ref = association.ref;
         options.AssociationModel = Model.db.base.models[association.ref];
         options.AssociationModel = Model.Ndb[options.modelName];
-        console.log(options.modelName, options.AssociationModel.associationsData);
+        // console.log(options.modelName, options.AssociationModel.associationsData);
         options.associationCollectionName = options.AssociationModel.collection.collectionName;
         options.parent = ('parent' in options) ? options.parent : false;
 
         return options;
     };
-    static GetNAssociationOptions(Model, associationName, data) {
+    static GetNAssociationOptions(Model, associationName) {
         const association = Model.NAssociationsData[associationName];
         const options = association ? association.NOptions : null;
         if (!options) return null;
@@ -110,7 +111,7 @@ class ModelLib {
             const attributeName = key.substring(0, key.length - 3)
             const options = ModelLib.GetAssociationOptions(Model, attributeName, {});
             console.log(attributeName, options);
-            if ((options && options.association)) {
+            if ((options && options.AssociationModel)) {
                 attributes.push(attributeName);
                 continue;
             };
@@ -176,8 +177,42 @@ class ModelLib {
             return null;
         };
     };
+    static pathsToPopulate(Model, paths) {
+        let options = {
+            select: [],
+            populate: [],
+        };
+        const attribtues = ModelLib.GetAttributes(Model)
+        for (const path of paths) {
+            if (path == "*") {
+                options.select = undefined
+                break;
+            }
+            if (attribtues.includes(path) && !options.select.includes(path)) {
+                options.select.push(path);
+            }
+        }
+        const associationAttributes = this.GetAssociationAttributes(Model);
+        for (const associationName of associationAttributes) {
+            const associationOptions = this.GetAssociationOptions(Model, associationName)
+            let associationPaths = paths.filter((path) => path.startsWith(associationName));
+            if (associationPaths.length == 0) continue;
+            const AssociationModel = associationOptions.AssociationModel;
+            associationPaths = Array.from(associationPaths, (path) => path.split(".").slice(1).join("."));
+            let associationPopulate = {
+                // model: AssociationModel,
+                path: associationOptions.keyName,
+                ...this.pathsToPopulate(AssociationModel, associationPaths)
+            };
+
+            options.populate.push(associationPopulate);
+        }
+        if ((options.populate).length == 0) delete options.populate;
+        else if ((options.populate).length == 1) options.populate = options.populate[0];
+        if (options.select?.length == Object.keys(attribtues).length) delete options.select;
+        return options;
+    }
     static async GetAllModels(Model, options = {}) {
-        console.log(Model);
         const where = options.where ? options.where : {}
         const invisibleAttributes = ModelLib.GetAttributes(Model, { invisible: true });
         var str = "-" + invisibleAttributes.join(" -");
@@ -185,6 +220,7 @@ class ModelLib {
         console.log(where);
 
         try {
+            db.User.find().populate([{}])
             const model = await Model.find(where).select(str);
             return model;
         } catch (err) {
