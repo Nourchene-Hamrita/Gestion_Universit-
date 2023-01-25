@@ -43,6 +43,11 @@ schema = mongoose.Schema,
     });
 const modelOffer = mongoose.model("offer", offerSchema);
 class Offer extends modelOffer {
+    static get viewOptions() {
+        return {
+            "full": ["*", "alumni.user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

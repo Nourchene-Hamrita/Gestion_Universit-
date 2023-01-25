@@ -42,6 +42,11 @@ schema = mongoose.Schema,
     });
 const modelExperience = mongoose.model("experience", experienceSchema);
 class Experience extends modelExperience {
+    static get viewOptions() {
+        return {
+            "full": ["*", "student.user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

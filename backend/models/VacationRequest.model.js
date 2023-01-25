@@ -40,6 +40,11 @@ schema = mongoose.Schema,
     });
 const modelVacationRequest = mongoose.model("vacationRequest", vacationRequestSchema);
 class VacationRequest extends modelVacationRequest {
+    static get viewOptions() {
+        return {
+            "full": ["*", "alumni.user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

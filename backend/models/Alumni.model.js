@@ -37,6 +37,12 @@ schema = mongoose.Schema,
     });
 const modelAlumni = mongoose.model("alumni", alumniSchema);
 class Alumni extends modelAlumni {
+    static get viewOptions() {
+        return {
+            "full": ["*", "user.*", "PFA.*", "PFE.*"],
+            "nested": ["*", "user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

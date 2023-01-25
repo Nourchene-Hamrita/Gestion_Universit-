@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const crudOptions= {
     "create": false,
-    "read": false,
+    "read": (user) => { return ["admin"].includes(user.account) },
     "update": false,
     "delete": false,
   }
@@ -24,6 +24,12 @@ schema = mongoose.Schema,
     });
 const modelAdmin = mongoose.model("admin", adminSchema);
 class Admin extends modelAdmin {
+    static get viewOptions() {
+        return {
+            "full": ["*", "user.*", "PFA.*", "PFE.*"],
+            "nested": ["*", "user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

@@ -41,6 +41,7 @@ class ModelLib {
 
         options.AssociationModel = Model.db.base.models[options.ref];
         options.AssociationModel = Model.Ndb[options.modelName];
+        console.log(Model, associationName);
         console.log(options.modelName, options.AssociationModel.associationsData);
 
         options.associationCollectionName = options.AssociationModel.collection.collectionName;
@@ -96,7 +97,7 @@ class ModelLib {
     }
     static GetChildrenAttributes(Model) {
         var attributes = [];
-        for (const attributeName of Object.keys(Model.NAssociationsData)) {
+        for (const attributeName of Object.keys(Model.NAssociationsData || {})) {
             const options = ModelLib.GetNAssociationOptions(Model, attributeName, {});
             if ((options && options.child)) {
                 attributes.push(attributeName);
@@ -177,7 +178,10 @@ class ModelLib {
             return null;
         };
     };
-    static pathsToPopulate(Model, paths) {
+    static pathsToPopulateVisible(Model, paths) {
+        return this.pathsToPopulate(Model, paths, (Model, path) => Model.attributes[path]?.NOptions?.invisible != true)
+    }
+    static pathsToPopulate(Model, paths, filter = undefined) {
         let options = {
             select: [],
             populate: [],
@@ -189,8 +193,12 @@ class ModelLib {
                 break;
             }
             if (attribtues.includes(path) && !options.select.includes(path)) {
+                if (filter && !filter?.(Model, path)) continue
                 options.select.push(path);
             }
+        }
+        if (options.select == undefined && filter) {
+            options.select = attribtues.filter(path => filter(Model, path))
         }
         const associationAttributes = this.GetAssociationAttributes(Model);
         for (const associationName of associationAttributes) {
@@ -200,28 +208,34 @@ class ModelLib {
             const AssociationModel = associationOptions.AssociationModel;
             associationPaths = Array.from(associationPaths, (path) => path.split(".").slice(1).join("."));
             let associationPopulate = {
-                // model: AssociationModel,
                 path: associationOptions.keyName,
-                ...this.pathsToPopulate(AssociationModel, associationPaths)
+                ...this.pathsToPopulate(AssociationModel, associationPaths, filter)
             };
 
             options.populate.push(associationPopulate);
         }
+
         if ((options.populate).length == 0) delete options.populate;
         else if ((options.populate).length == 1) options.populate = options.populate[0];
         if (options.select?.length == Object.keys(attribtues).length) delete options.select;
         return options;
     }
+    static SchemaToPaths(Model, schema) {
+        if (!schema) return [];
+        if (schema in (Model.viewOptions || {})) return Model.viewOptions[schema]
+        switch (schema) {
+            case "full":
+            case "nested":
+            case "pure":
+                return ["*"];
+        }
+        return ["_id"];
+    }
     static async GetAllModels(Model, options = {}) {
-        const where = options.where ? options.where : {}
-        const invisibleAttributes = ModelLib.GetAttributes(Model, { invisible: true });
-        var str = "-" + invisibleAttributes.join(" -");
-        console.log(str);
-        console.log(where);
-
+        const { where = {}, select, populate = [] } = options
+        var selectStr = select ? select.join(" ") : "*";
         try {
-            db.User.find().populate([{}])
-            const model = await Model.find(where).select(str);
+            const model = await Model.find(where).select(selectStr).populate(populate);
             return model;
         } catch (err) {
             console.error(err);
@@ -229,17 +243,13 @@ class ModelLib {
         };
 
     };
-    static async GetModel(Model, id, options = {}) {
-        const where = options.where ? options.where : {}
-        const invisibleAttributes = ModelLib.GetAttributes(Model, { invisible: true });
-        var str = '-' + invisibleAttributes.join(" -");
-        console.log(str);
-        console.log(where);
+    static async GetModel(Model, options = {}) {
+        const { where = {}, select, populate = [] } = options
+        const { id } = where
+        var selectStr = select ? select.join(" ") : "*";
         if (id) {
             try {
-                const model = await Model.findById({ _id: id }).select(str);
-                const email = model.get('email', null, { getters: true });
-                model.email = email;
+                const model = await Model.findById({ _id: id }).select(selectStr).populate(populate);
                 return (model);
             } catch (error) {
                 console.error(error);
@@ -247,7 +257,7 @@ class ModelLib {
             }
         } else {
             try {
-                const model = await Model.findOne(where).select(str);
+                const model = await Model.findOne(where).select(selectStr).populate(populate);
                 return model;
             } catch (err) {
                 console.error(err);

@@ -60,6 +60,11 @@ schema = mongoose.Schema,
     });
 const modelPFA = mongoose.model("pfa", PFASchema);
 class PFA extends modelPFA {
+    static get viewOptions() {
+        return {
+            "full": ["*", "student.user.*", "teacher.user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

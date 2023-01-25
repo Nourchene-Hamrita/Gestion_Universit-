@@ -58,6 +58,11 @@ schema = mongoose.Schema,
     });
 const modelPFE = mongoose.model("pfe", PFESchema);
 class PFE extends modelPFE {
+    static get viewOptions() {
+        return {
+            "full": ["*", "student.user.*", "teacher.user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

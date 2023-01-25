@@ -22,7 +22,16 @@ app.use('/stats', StatsRouter);
 app.use('/trainingManager', TrainingManagerRouter);
 app.use('/admin', AdminRouter);
 
+process
+  .on('unhandledRejection', (reason, p) => {
+    console.error(reason, 'Unhandled Rejection at Promise', p);
+    console.error(new Error().stack);
 
+  })
+  .on('uncaughtException', err => {
+    console.error(err, 'Uncaught Exception thrown');
+    process.exit(1);
+  });
 const CONNECTION_URL = process.env.CONNECTION_URL;
 const PORT = process.env.PORT || 5000;
 mongoose.set('strictQuery', true);

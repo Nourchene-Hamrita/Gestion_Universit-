@@ -23,7 +23,13 @@ async function verifyToken(req, res, next) {
         const token = req.headers["user-token"]
         const decoded = decodeToken(token)
         const { id, date } = decoded
-        const user = await User.findById({ _id: id })
+        const paths = ModelLib.SchemaToPaths(User, "auth")
+        let options = ModelLib.pathsToPopulate(User, paths)
+        options.where = { id }
+        console.log(paths);
+        console.log(options);
+        const user = await ModelLib.GetModel(User, options)
+        console.log(user);
         if (!user) throw { message: `User Not Found`, status: 401 }
         const { activated, passwordChangedDate, logoutDate } = user
         // if (activated == false) {

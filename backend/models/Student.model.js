@@ -83,6 +83,12 @@ schema = mongoose.Schema,
     });
 const modelStudent = mongoose.model("student", studentSchema);
 class Student extends modelStudent {
+    static get viewOptions() {
+        return {
+            "full": ["*", "user.*", "PFA.*", "PFE.*"],
+            "nested": ["*", "user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

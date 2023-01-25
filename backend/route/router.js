@@ -13,19 +13,25 @@ const { verifyToken } = require('./auth');
  */
 function verifyCrud(crud) {
     return async (req, res, next) => {
-        const user = req.user
-        const CRUDModel = req.CRUDModel
-        const crudOption = crud in CRUDModel.crudOptions ? CRUDModel.crudOptions[crud] : true
-        let crudResponse
-        if (typeof crudOption == "function") {
-            crudResponse = await crudOption(user || undefined)
-        } else {
-            crudResponse = crudOption
+        try {
+            const user = req.user
+            const CRUDModel = req.CRUDModel
+            const crudOption = crud in CRUDModel.crudOptions ? CRUDModel.crudOptions[crud] : true
+            let crudResponse
+            if (typeof crudOption == "function") {
+                crudResponse = await crudOption(user || undefined)
+            } else {
+                crudResponse = crudOption
+            }
+            if (!crudResponse)
+                throw { status: 403, message: "User Not Authorized" };
+            req.crudResponse = crudResponse
+            return next()
+
+        } catch (error) {
+            return res.status(error.status || 500).send(error.message || "Server Internal Error")
+
         }
-        if (!crudResponse)
-            throw { status: 403, message: "User Not Authorized" };
-        req.crudResponse = crudResponse
-        return next()
     }
 }
 
@@ -86,7 +92,6 @@ router.post('/:Model/Create', VerifyModel, verifyToken, verifyCrud("create"), as
         }
         const result = await ModelLib.CreateModel(Model, req.body.data);
         res.send(result);
-        console.log(result);
     } catch (error) {
         console.error(error);
     }
@@ -96,7 +101,10 @@ router.get('/:Model/GetAllModels', VerifyModel, verifyToken, verifyCrud("read"),
     const Model = req.Model;
     try {
         const crudResponse = req.crudResponse
-        let options = {}
+        const paths = ModelLib.SchemaToPaths(Model, "nested")
+        let options = ModelLib.pathsToPopulateVisible(Model, paths)
+        console.log(paths);
+        console.log(options);
         switch (crudResponse) {
             case true:
                 break;
@@ -109,19 +117,6 @@ router.get('/:Model/GetAllModels', VerifyModel, verifyToken, verifyCrud("read"),
         }
         const result = await ModelLib.GetAllModels(Model, options);
         res.send({ data: result });
-        console.log(result);
-    } catch (error) {
-        console.error(error);
-    }
-});
-
-router.get('/:Model/populate', VerifyModel, async function (req, res, next) {
-    const Model = req.Model;
-    try {
-        const options = ModelLib.pathsToPopulate(Model, req.body.paths)
-        console.log(options);
-        const rows = await req.Model.find().populate(options.populate)
-        res.send({ options, rows })
     } catch (error) {
         console.error(error);
     }
@@ -131,7 +126,10 @@ router.get('/:Model/GetModel', VerifyModel, verifyToken, verifyCrud("read"), asy
     const Model = req.Model;
     try {
         const crudResponse = req.crudResponse
-        let options = { where: { id: req.body.id } }
+        const paths = ModelLib.SchemaToPaths(Model, "full")
+        let options = { where: { id: req.query.id }, ...ModelLib.pathsToPopulateVisible(Model, paths) }
+        console.log(paths);
+        console.log(options);
         switch (crudResponse) {
             case true:
                 break;
@@ -142,10 +140,8 @@ router.get('/:Model/GetModel', VerifyModel, verifyToken, verifyCrud("read"), asy
                 options.where = { ...options.where, ...crudResponse }
                 break;
         }
-        const result = await ModelLib.GetModel(Model, null, options);
+        const result = await ModelLib.GetModel(Model, options);
         res.json(result);
-        console.log(result.get('email', null, { getters: true }));
-        console.log(result);
     } catch (error) {
         console.error(error);
     }
@@ -155,6 +151,7 @@ router.patch('/:Model/Update/:id', VerifyModel, verifyToken, verifyCrud("update"
         return res.status(400).send('ID unknown: ' + req.params.id);
     const Model = req.Model;
     try {
+
         const newModel = await ModelLib.UpdateModel(Model, req.params.id, req.body.data);
         res.send({ data: newModel });
         console.log(newModel);
@@ -195,8 +192,8 @@ router.post('/:Model/Get/:association/:id', VerifyModel, verifyToken, VerifyAsso
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send('ID unknown: ' + req.params.id);
     try {
-        const instance = await ModelLib.GetModel(Model, req.params.id);
-        const result = await ModelLib.GetModel(AssociationModel, instance[req.associationName + '_id']);
+        const instance = await ModelLib.GetModel(Model, { where: { id: req.params.id } });
+        const result = await ModelLib.GetModel(AssociationModel, { where: { id: instance[req.associationName + '_id'] } });
         res.send({ data: result });
         console.log(result);
     } catch (error) {
@@ -207,7 +204,7 @@ router.get('/:Model/GetModelRoleById/:id', VerifyModel, verifyToken, async funct
     const Model = req.Model;
     console.log(Model);
     try {
-        const result = await ModelLib.GetModelRoleById(Model, req.params.id);
+        const result = await ModelLib.GetModelRoleById(Model, { where: { id: req.params.id } });
         //console.log("result",result);
         res.send({ data: result });
     } catch (error) {
