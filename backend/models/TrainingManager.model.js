@@ -24,6 +24,12 @@ schema = mongoose.Schema,
     });
 const modelTrainingManager = mongoose.model("trainingManager", TManagerSchema);
 class TrainingManager extends modelTrainingManager {
+    static get viewOptions() {
+        return {
+            "full": ["*", "user.*", "PFA.*", "PFE.*"],
+            "nested": ["*", "user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

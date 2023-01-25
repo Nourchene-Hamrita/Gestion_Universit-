@@ -87,9 +87,14 @@ userSchema = new schema({
 })
 const modelUser = mongoose.model("user", userSchema);
 class User extends modelUser {
-    static get attributes() {
-        return attributes
+    static get viewOptions() {
+        return {
+            "auth": ["id", "email", "password", "account", "passwordChangedDate"],
+            "full": ["*"],
+            "nested": ["*"],
+        }
     }
+    static get attributes() { return attributes }
     static get crudOptions() { return crudOptions }
     static get associationsData() { return associationsData }
     static get NAssociationsData() {

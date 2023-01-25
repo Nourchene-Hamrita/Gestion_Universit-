@@ -32,6 +32,11 @@ schema = mongoose.Schema,
     });
 const modelEventInvitation = mongoose.model("eventInvitation", eventInvitationSchema);
 class EventInvitation extends modelEventInvitation {
+    static get viewOptions() {
+        return {
+            "full": ["*", "alumni.user.*", "event.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

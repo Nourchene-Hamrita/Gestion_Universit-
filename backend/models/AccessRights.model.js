@@ -24,6 +24,12 @@ schema = mongoose.Schema,
     });
 const modelAccessRights = mongoose.model("accessRight", accessRightsSchema);
 class AccessRights extends modelAccessRights {
+    static get viewOptions() {
+        return {
+            "full": ["*", "user.*"],
+            "nested": ["*", "user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }

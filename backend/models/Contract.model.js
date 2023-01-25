@@ -40,6 +40,11 @@ schema = mongoose.Schema,
     });
 const modelContract = mongoose.model("contract", contractSchema);
 class Contract extends modelContract {
+    static get viewOptions() {
+        return {
+            "full": ["*", "alumni.user.*"],
+        }
+    }
     static get crudOptions() { return crudOptions }
     static get attributes() { return attributes }
     static get associationsData() { return associationsData }
