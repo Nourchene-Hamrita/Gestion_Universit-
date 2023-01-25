@@ -26,7 +26,7 @@ const modelAdmin = mongoose.model("admin", adminSchema);
 class Admin extends modelAdmin {
     static get viewOptions() {
         return {
-            "full": ["*", "user.*", "PFA.*", "PFE.*"],
+            "full": ["*", "user.*", "user.accessRights.*"],
             "nested": ["*", "user.*"],
         }
     }
