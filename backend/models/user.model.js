@@ -11,13 +11,13 @@ let userSchema = new mongoose.Schema;
 const attributes = {
     firstName: {
         type: String,
-        required: true,
+        //required: true,
         NOptions: {}
 
     },
     lastName: {
         type: String,
-        required: true,
+        //required: true,
         NOptions: {}
 
     },

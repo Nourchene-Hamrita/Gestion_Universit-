@@ -123,7 +123,7 @@ cron.schedule("00 08 15 7,10 *", async () => {
         .populate("user_id")
     for (const student of students) {
         const user = student.user_id
-        MailService.SendUserMessage(user, "mettre a jour date d obtention de diplome")
+        MailService.SendUserMessage(user, "Mettre à jour date d'obtention de diplome")
     }
 })
 cron.schedule("00 08 1 1,7 *", async () => {
@@ -132,6 +132,6 @@ cron.schedule("00 08 1 1,7 *", async () => {
         .populate("user_id")
     for (const student of students) {
         const user = student.user_id
-        MailService.SendUserMessage(user, "mettre a jour date des competence et profolio")
+        MailService.SendUserMessage(user, "Mettre a jour date des compétences et profolio")
     }
 })
