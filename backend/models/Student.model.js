@@ -31,6 +31,7 @@ const attributes = {
     },
     public: {
         type: Boolean,
+        default: false,
         NOptions: {}
     },
     status: {
