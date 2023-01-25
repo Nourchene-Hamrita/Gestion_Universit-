@@ -19,12 +19,25 @@ router.post('/validateAlumni', verifyToken, async function (req, res, next) {
         if (!(user.account == "admin"))
             throw { status: 403, message: "User Not Authorized" };
         const { id } = req.body
-        const alumni = await ModelLib.UpdateModel(db.Alumni, id, { approved: true });
+        const alumni = await db.Alumni.updateOne({ _id: id }, { verified: true });
         res.send({ data: alumni });
     } catch (error) {
         HandleError(res, error)
     }
 });
+router.post('/setAccessRights', verifyToken, async function (req, res, next) {
+    try {
+        const user = req.user
+        if (!(user.account == "admin"))
+            throw { status: 403, message: "User Not Authorized" };
+        const { user_id, accessRights } = req.body
+        const alumni = await db.User.updateOne({ _id: user_id }, { accessRights });
+        res.send({ data: alumni });
+    } catch (error) {
+        HandleError(res, error)
+    }
+});
+
 
 module.exports = {
     router

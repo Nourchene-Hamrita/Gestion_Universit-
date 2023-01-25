@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Student = require("./Student.model");
 const crudOptions = {
     "create": false,
-    "read": false,
+    "read": (user) => { return ["admin"].includes(user.account) },
     "update": false,
     "delete": false,
 }

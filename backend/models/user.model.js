@@ -73,13 +73,12 @@ const attributes = {
             invisible: true, immutable: true,
         }
     },
-    accessRights: [{
+    accessRights: {
+        type: [String],
         NOptions: {
-        },
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "accessRights",
-        default: [],
-    }],
+            immutable: true,
+        }
+    },
 
     createdAt: {
         type: Date,
@@ -103,7 +102,7 @@ const modelUser = mongoose.model("user", userSchema);
 class User extends modelUser {
     static get viewOptions() {
         return {
-            "auth": ["id", "email", "password", "account", "passwordChangedDate"],
+            "auth": ["id", "email", "password", "account", "passwordChangedDate", "accessRights"],
             "full": ["*", "accessRights.*"],
             "nested": ["*"],
         }

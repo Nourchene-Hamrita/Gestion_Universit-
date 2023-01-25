@@ -22,7 +22,7 @@ const crudOptions = {
         }
         return false
     },
-    "delete": (user) => (user) => { return ["admin"].includes(user.account) },
+    "delete": (user) => { return ["admin"].includes(user.account) },
 }
 const attributes = {
     class: {
@@ -66,6 +66,20 @@ const attributes = {
 
 }
 const associationsData = {
+    PFA_id: {
+        NOptions: {
+        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "pFA",
+        required: false
+    },
+    PFE_id: {
+        NOptions: {
+        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "pFE",
+        required: false
+    },
     user_id: {
         NOptions: {
             parent: true
@@ -113,7 +127,7 @@ class Student extends modelStudent {
 module.exports = Student;
 
 const cron = require('node-cron');
-const { MailService } = require("../lib/mail");
+const MailService = require("../lib/mail");
 cron.schedule("00 00 1 3,9 *", async () => {
     const students = await Student.find()
         .populate("user_id")

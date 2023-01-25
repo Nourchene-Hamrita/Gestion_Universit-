@@ -18,7 +18,7 @@ router.get('/alumni', verifyToken, async function (req, res, next) {
         const user = req.user
         if (!(user.account == "admin"))
             throw { status: 403, message: "User Not Authorized" };
-        const { where } = req.body.where
+        const { where = {} } = req.body
         //todo stats values
         const alumnis = await db.Alumni.find(where)
         const count = alumnis.length
@@ -26,7 +26,7 @@ router.get('/alumni', verifyToken, async function (req, res, next) {
         let output = {
             count
         }
-        res.status(process.env.RESPONSE_OK).send(output)
+        res.status(200).send(output)
     } catch (error) {
         HandleError(res, error)
     }
@@ -36,7 +36,7 @@ router.get('/PFE', verifyToken, async function (req, res, next) {
         const user = req.user
         if (!(user.account == "admin"))
             throw { status: 403, message: "User Not Authorized" };
-        const { where } = req.body.where
+        const { where = {} } = req.body
         //todo stats values
         const pfes = await db.PFE.find(where)
         const count = pfes.length
@@ -44,7 +44,7 @@ router.get('/PFE', verifyToken, async function (req, res, next) {
         let output = {
             count
         }
-        res.status(process.env.RESPONSE_OK).send(output)
+        res.status(200).send(output)
     } catch (error) {
         HandleError(res, error)
     }
@@ -81,7 +81,7 @@ router.get('/unemployement', verifyToken, async function (req, res, next) {
             countEmployed: count - countUnemployed,
             groupByMonth
         }
-        res.status(process.env.RESPONSE_OK).send(output)
+        res.status(200).send(output)
     } catch (error) {
         HandleError(res, error)
     }

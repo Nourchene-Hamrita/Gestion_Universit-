@@ -5,6 +5,7 @@ const ModelLib = require('../lib/modelLib');
 const { signUpErrors } = require('../utils/errors.utils');
 const { verifyToken } = require('./auth');
 
+const ObjectID = require('mongoose').Types.ObjectId;
 
 /**
  * 
@@ -18,7 +19,10 @@ function verifyCrud(crud) {
             const CRUDModel = req.CRUDModel
             const crudOption = crud in CRUDModel.crudOptions ? CRUDModel.crudOptions[crud] : true
             let crudResponse
-            if (typeof crudOption == "function") {
+            if (req.user.accessRights?.includes[`${CRUDModel.name}:${crud}`]) {
+                crudResponse = true
+            }
+            else if (typeof crudOption == "function") {
                 crudResponse = await crudOption(user || undefined)
             } else {
                 crudResponse = crudOption
