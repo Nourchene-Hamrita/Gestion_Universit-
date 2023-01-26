@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const crudOptions = {
-    "create": false,
-    "read": false,
-    "update": false,
-    "delete": false,
+    "create": (user) => { return ["student"].includes(user.account) },
+    "read":  (user) => { return ["student"].includes(user.account) },
+    "update":  (user) => { return ["student"].includes(user.account) },
+    "delete":  (user) => { return ["student"].includes(user.account) },
 }
 const attributes = {
     title: {

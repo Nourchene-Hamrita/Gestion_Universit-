@@ -10,15 +10,13 @@ const attributes = {
 }
 const associationsData = {
     alumni_id: {
-        NOptions: {
-        },
+        NOptions: {},
         type: mongoose.Schema.Types.ObjectId,
         ref: "alumni",
         required: true
     },
     event_id: {
-        NOptions: {
-        },
+        NOptions: {},
         type: mongoose.Schema.Types.ObjectId,
         ref: "event",
         required: true

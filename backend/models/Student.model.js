@@ -100,7 +100,7 @@ const modelStudent = mongoose.model("student", studentSchema);
 class Student extends modelStudent {
     static get viewOptions() {
         return {
-            "full": ["*", "user.*", "PFA.*", "PFE.*"],
+            "full": ["*", "user.*", "PFA.*", "PFE.*","Experience.*"],
             "nested": ["*", "user.*"],
         }
     }
@@ -118,6 +118,12 @@ class Student extends modelStudent {
             PFE: {
                 type: 'one',
                 modelName: 'PFE',
+                keyName: 'student_id',
+                NOptions: {},
+            },
+            Experience: {
+                type: 'many',
+                modelName: 'Experience',
                 keyName: 'student_id',
                 NOptions: {},
             },
