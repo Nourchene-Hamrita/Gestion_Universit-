@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 const Student = require("./Student.model");
 const Teacher = require("./Teacher.model");
 
-const { MailService } = require("../lib/mail");
+const MailService = require("../lib/mail");
 const crudOptions = {
-    "create": (user) => { return ["teacher"].includes(user.account) },
+    "create": (user) => { return ["teacher", "admin"].includes(user.account) },
     "read": (user) => { return ["teacher", "student", "trainingManager", "admin"].includes(user.account) },
     "update": (user) => { return ["teacher", "student", "admin"].includes(user.account) },
-    "delete": false,
+    "delete": (user) => { return ["admin"].includes(user.account) },
 }
 const attributes = {
     title: {
@@ -32,7 +32,7 @@ const attributes = {
         NOptions: {}
     },
     endDate: {
-        type: Number,
+        type: Date,
         NOptions: {}
     },
 }
@@ -58,7 +58,7 @@ schema = mongoose.Schema,
         ...attributes,
         ...associationsData
     });
-const modelPFA = mongoose.model("pfa", PFASchema);
+const modelPFA = mongoose.model("pFA", PFASchema);
 class PFA extends modelPFA {
     static get viewOptions() {
         return {
@@ -91,14 +91,16 @@ class PFA extends modelPFA {
             },
             afterUpsert: async (instance, data) => {
                 if (data.student_id) {
-                    const student = await Student.findById(data.student_id).populate("user_id")
+                    let student = await Student.findById(data.student_id).populate("user_id")
+                    student.PFA_id = instance.id
+                    student.save()
                     const user = student?.user_id
-                    await MailService.SendUserMessage(user, "Votre PFA a ete affecte")
+                    MailService.SendUserMessage(user, "Votre PFA a ete affecte")
                 }
                 if (data.teacher_id) {
                     const teacher = await Teacher.findById(data.teacher_id).populate("user_id")
                     const user = teacher?.user_id
-                    await MailService.SendUserMessage(user, "Un PFA a ete ajouter")
+                    MailService.SendUserMessage(user, "Un PFA a ete ajouter")
                 }
             },
 

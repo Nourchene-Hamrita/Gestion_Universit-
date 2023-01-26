@@ -3,7 +3,14 @@ var bcrypt = require('bcryptjs');
 
 const crudOptions = {
     "create": true,
-    "read": (user) => { return { _id: user?.id } },
+    "read": (user) => {
+        switch (user.account) {
+            case "admin":
+                return true
+            default:
+                return { _id: user?.id }
+        }
+    },
     "update": true,
     "delete": true,
 }
@@ -66,6 +73,12 @@ const attributes = {
             invisible: true, immutable: true,
         }
     },
+    accessRights: {
+        type: [String],
+        NOptions: {
+            immutable: true,
+        }
+    },
 
     createdAt: {
         type: Date,
@@ -89,8 +102,8 @@ const modelUser = mongoose.model("user", userSchema);
 class User extends modelUser {
     static get viewOptions() {
         return {
-            "auth": ["id", "email", "password", "account", "passwordChangedDate"],
-            "full": ["*"],
+            "auth": ["id", "email", "password", "account", "passwordChangedDate", "accessRights"],
+            "full": ["*", "accessRights.*"],
             "nested": ["*"],
         }
     }

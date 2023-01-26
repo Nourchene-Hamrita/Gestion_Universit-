@@ -56,7 +56,7 @@ schema = mongoose.Schema,
         ...attributes,
         ...associationsData
     });
-const modelPFE = mongoose.model("pfe", PFESchema);
+const modelPFE = mongoose.model("pFE", PFESchema);
 class PFE extends modelPFE {
     static get viewOptions() {
         return {
@@ -68,6 +68,20 @@ class PFE extends modelPFE {
     static get associationsData() { return associationsData }
     static get NAssociationsData() {
         return {
+
+
+        }
+    }
+    static get Nhooks() {
+        return {
+            afterUpsert: async (instance, data) => {
+                if (data.student_id) {
+                    let student = await Student.findById(data.student_id)
+                    student.PFE_id = instance.id
+                    student.save()
+                }
+            },
+
 
 
         }

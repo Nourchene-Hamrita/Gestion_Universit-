@@ -86,12 +86,15 @@ router.post('/register', async function (req, res, next) {
 
 router.post('/ChangePassword', verifyToken, async function (req, res, next) {
     try {
-        const oldPassword = req.body.old_password
+        const oldPassword = req.body.data.oldPassword
         if (!bcrypt.compareSync(oldPassword, req.user.password)) {
             return res.status(process.env.RESPONSE_ERROR).send('Current Password is not valid')
         }
-        await ModelLib.UpdateModel(User, req.user.id, { password: req.body.password })
-        res.status(process.env.RESPONSE_OK).send({ msg: "ok" })
+        const salt = await bcrypt.genSalt();
+        const password = await bcrypt.hash(req.body.data.password, salt);
+        req.user.password=password
+        await req.user.save()
+        res.status(200).send({ msg: "ok" })
     } catch (error) {
         HandleError(res, error)
     }

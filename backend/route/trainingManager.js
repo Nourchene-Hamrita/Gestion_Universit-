@@ -19,8 +19,8 @@ router.post('/validatePFA', verifyToken, async function (req, res, next) {
         if (!(user.account == "trainingManager"))
             throw { status: 403, message: "User Not Authorized" };
         const { id } = req.body
-        const pfa = await ModelLib.UpdateModel(db.PFA, id, { approved: true });
-        res.send({ data: pfa });
+        const pFA = await ModelLib.UpdateModel(db.PFA, id, { approved: true });
+        res.send({ data: pFA });
     } catch (error) {
         HandleError(res, error)
     }

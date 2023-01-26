@@ -24,7 +24,6 @@ class ModelLib {
         options.keyName = associationName + '_id';
         options.modelName = StringLib.capitalizeFirstLetter(association.ref);
         options.ref = association.ref;
-        options.AssociationModel = Model.db.base.models[association.ref];
         options.AssociationModel = Model.Ndb[options.modelName];
         // console.log(options.modelName, options.AssociationModel.associationsData);
         options.associationCollectionName = options.AssociationModel.collection.collectionName;
@@ -72,6 +71,7 @@ class ModelLib {
         for (const attributeName of Object.keys(Model.attributes)) {
             var filter = true
             const options = ModelLib.GetAttributeOptions(Model, attributeName, {});
+            if (!options) continue
             for (const key in where) {
                 if (key in options && options[key] != where[key]) {
                     filter = false;
@@ -148,11 +148,10 @@ class ModelLib {
         const checkData = ModelLib.VerifyData(Model, data);
         const noUpsertAttributes = ModelLib.GetAttributes(Model, { noUpsert: true })
         const modelHooks = Model.Nhooks;
-        var instance = {};
         try {
             for (const event of beforeEvents) {
                 if (modelHooks && event in modelHooks) {
-                    await modelHooks[event](instance, data)
+                    await modelHooks[event]({}, data)
                 };
             };
             for (const noUpsert of noUpsertAttributes) {
@@ -161,14 +160,12 @@ class ModelLib {
             const newModel = new Model({
                 ...data
             });
-            console.log('fullname', newModel.fullname);
-
 
             const docs = await newModel.save();
 
             for (const event of afterEvents) {
                 if (modelHooks && event in modelHooks) {
-                    await modelHooks[event](instance, data);
+                    await modelHooks[event](docs, data);
                 };
             };
             docs.set({ email: data.email });
@@ -217,7 +214,6 @@ class ModelLib {
 
         if ((options.populate).length == 0) delete options.populate;
         else if ((options.populate).length == 1) options.populate = options.populate[0];
-        if (options.select?.length == Object.keys(attribtues).length) delete options.select;
         return options;
     }
     static SchemaToPaths(Model, schema) {

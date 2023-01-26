@@ -22,7 +22,7 @@ schema = mongoose.Schema,
         ...attributes,
         ...associationsData
     });
-const modelAccessRights = mongoose.model("accessRight", accessRightsSchema);
+const modelAccessRights = mongoose.model("accessRights", accessRightsSchema);
 class AccessRights extends modelAccessRights {
     static get viewOptions() {
         return {
