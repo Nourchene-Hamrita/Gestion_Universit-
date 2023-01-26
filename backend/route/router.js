@@ -6,7 +6,6 @@ const ModelLib = require('../lib/modelLib');
 const { signUpErrors } = require('../utils/errors.utils');
 const { verifyToken } = require('./auth');
 
-const ObjectID = require('mongoose').Types.ObjectId;
 
 /**
  * 
