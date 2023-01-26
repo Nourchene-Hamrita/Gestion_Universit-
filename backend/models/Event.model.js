@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const crudOptions = {
-    "create": false,
+    "create": (user) => { return ["admin", "student"].includes(user.account) },
     "read": (user) => { return ["admin", "student"].includes(user.account) },
-    "update": false,
-    "delete": false,
+    "update": (user) => { return [ "admin", "student"].includes(user.account) },
+    "delete":  (user) => { return ["admin"].includes(user.account) },
 }
 const attributes = {
     requestedInstitut: {
@@ -23,7 +23,7 @@ const attributes = {
         NOptions: {}
     },
     endDate: {
-        type: Number,
+        type: Date,
         NOptions: {}
     },
 }
